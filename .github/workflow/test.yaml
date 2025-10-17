@@ -1,0 +1,40 @@
+name: Run Lint and Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.3"
+
+      - name: Format
+        run: |
+          make fmt
+
+          if [[ $(git status --porcelain) ]]; then
+            echo "Error: There are uncommitted changes in the working directory."
+            git diff
+            exit 1
+          fi
+
+      - name: Lint
+        run: make lint
+
+      - name: Test
+        run: make test
