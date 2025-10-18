@@ -5,6 +5,7 @@ Utility helpers for Go 1.23+ that cover common patterns such as ternary evaluati
 ## Modules
 
 - `operator`: generic `Ternary` and `TernaryFunc` helpers that return eager or lazily computed values based on a boolean condition.
+- `slices`: functional helpers like `Map`, `FlatMap`, `GroupBy`, `Find`, `Filter`, and `Unique` for working with collections.
 - `ptr`: convenience functions for working with pointers, including `Of`, `Unwrap`, and `Map`.
 - `tuple`: generic structs for 2–10 element tuples when you need to group multiple return values.
 
@@ -24,20 +25,31 @@ import (
 
 	"github.com/mickamy/gokitx/operator"
 	"github.com/mickamy/gokitx/ptr"
+	"github.com/mickamy/gokitx/slices"
 	"github.com/mickamy/gokitx/tuple"
 )
 
 func main() {
-	n := operator.Ternary(true, 10, 0)
+	numbers := []int{1, 2, 2, 3}
+	unique := slices.Unique(numbers)
+	labels := slices.Map(unique, func(v int) string {
+		return fmt.Sprintf("value: %d", v)
+	})
+
+	selected, ok := slices.Find(unique, func(v int) bool {
+		return v > 1
+	})
+
+	n := operator.Ternary(ok, selected, 0)
 
 	p := ptr.Map(ptr.Of(n), func(v int) string {
 		return fmt.Sprintf("value: %d", v)
 	})
 
-	t := tuple.Triple[int, string, bool]{
+	t := tuple.Triple[int, string, []string]{
 		First:  n,
 		Second: ptr.Unwrap(p),
-		Third:  true,
+		Third:  labels,
 	}
 
 	fmt.Println(t)
