@@ -58,3 +58,12 @@ func Unique[T comparable](ts []T) []T {
 	}
 	return result
 }
+
+func All[T any](ts []T, f func(T) bool) bool {
+	for _, t := range ts {
+		if !f(t) {
+			return false
+		}
+	}
+	return true
+}

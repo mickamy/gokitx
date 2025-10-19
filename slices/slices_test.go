@@ -155,3 +155,52 @@ func TestUnique(t *testing.T) {
 		}
 	}
 }
+
+func TestAll(t *testing.T) {
+	t.Parallel()
+
+	tcs := []struct {
+		name     string
+		intSlice []int
+		pred     func(int) bool
+		want     bool
+	}{
+		{
+			name:     "all elements satisfy predicate",
+			intSlice: []int{2, 4, 6},
+			pred: func(v int) bool {
+				return v%2 == 0
+			},
+			want: true,
+		},
+		{
+			name:     "at least one element fails predicate",
+			intSlice: []int{2, 3, 4},
+			pred: func(v int) bool {
+				return v%2 == 0
+			},
+			want: false,
+		},
+		{
+			name:     "empty slice returns true",
+			intSlice: []int{},
+			pred: func(v int) bool {
+				return v%2 == 0
+			},
+			want: true,
+		},
+	}
+
+	for _, tc := range tcs {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := slices.All(tc.intSlice, tc.pred)
+
+			if got != tc.want {
+				t.Errorf("All() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
