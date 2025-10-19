@@ -26,6 +26,20 @@ func Right[T any, U any](_ T, val U) U {
 	return val
 }
 
+func Recover[T any](fn func() T) (ret T, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			if e, ok := r.(error); ok {
+				err = fmt.Errorf("recover: %w", e)
+				return
+			}
+			err = fmt.Errorf("recover: %v", r)
+		}
+	}()
+	ret = fn()
+	return ret, nil
+}
+
 func MapLeft[T any, U any, V any](val T, _ U, f func(T) V) V {
 	return f(val)
 }

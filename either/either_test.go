@@ -100,6 +100,62 @@ func TestRight(t *testing.T) {
 	}
 }
 
+func TestRecover(t *testing.T) {
+	t.Parallel()
+
+	tcs := []struct {
+		name      string
+		fn        func() int
+		expectErr bool
+		expected  int
+	}{
+		{
+			name: "no panic",
+			fn: func() int {
+				return 42
+			},
+			expectErr: false,
+			expected:  42,
+		},
+		{
+			name: "with panic",
+			fn: func() int {
+				panic("something went wrong")
+			},
+			expectErr: true,
+			expected:  0,
+		},
+		{
+			name: "panic with error",
+			fn: func() int {
+				panic(errors.New("an error occurred"))
+			},
+			expectErr: true,
+			expected:  0,
+		},
+	}
+
+	for _, tc := range tcs {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := either.Recover(tc.fn)
+			if tc.expectErr {
+				if err == nil {
+					t.Errorf("Recover() expected error, got nil")
+				}
+			} else {
+				if err != nil {
+					t.Errorf("Recover() unexpected error: %v", err)
+				}
+			}
+			if got != tc.expected {
+				t.Errorf("Recover() = %d; want %d", got, tc.expected)
+			}
+		})
+	}
+}
+
 func TestMapLeft(t *testing.T) {
 	t.Parallel()
 
