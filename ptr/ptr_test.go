@@ -12,7 +12,7 @@ func TestOf(t *testing.T) {
 	ptrVal := ptr.Of(val)
 
 	if ptrVal == nil {
-		t.Errorf("Of() returned nil pointer")
+		t.Fatalf("Of() returned nil pointer")
 	}
 	if *ptrVal != val {
 		t.Errorf("Of() = %v, want %v", *ptrVal, val)

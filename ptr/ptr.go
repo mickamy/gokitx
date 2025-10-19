@@ -6,7 +6,8 @@ func Of[T any](val T) *T {
 
 func Unwrap[T any](ptr *T) T {
 	if ptr == nil {
-		return *new(T)
+		var zero T
+		return zero
 	}
 	return *ptr
 }
