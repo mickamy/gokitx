@@ -19,3 +19,17 @@ func Map[T any, U any](ptr *T, f func(T) U) *U {
 	u := f(*ptr)
 	return &u
 }
+
+func OrElse[T any](ptr *T, defaultVal T) T {
+	if ptr == nil {
+		return defaultVal
+	}
+	return *ptr
+}
+
+func OrElseFunc[T any](ptr *T, defaultFunc func() T) T {
+	if ptr == nil {
+		return defaultFunc()
+	}
+	return *ptr
+}

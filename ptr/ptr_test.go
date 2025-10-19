@@ -93,3 +93,79 @@ func TestMap(t *testing.T) {
 		})
 	}
 }
+
+func TestOrElse(t *testing.T) {
+	t.Parallel()
+
+	tcs := []struct {
+		name       string
+		ptr        *int
+		defaultVal int
+		want       int
+	}{
+		{
+			name:       "nil pointer",
+			ptr:        nil,
+			defaultVal: 10,
+			want:       10,
+		},
+		{
+			name:       "non-nil pointer",
+			ptr:        func() *int { i := 20; return &i }(),
+			defaultVal: 10,
+			want:       20,
+		},
+	}
+
+	for _, tc := range tcs {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := ptr.OrElse(tc.ptr, tc.defaultVal)
+			if got != tc.want {
+				t.Errorf("OrElse() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestOrElseFunc(t *testing.T) {
+	t.Parallel()
+
+	tcs := []struct {
+		name        string
+		ptr         *int
+		defaultFunc func() int
+		want        int
+	}{
+		{
+			name: "nil pointer",
+			ptr:  nil,
+			defaultFunc: func() int {
+				return 15
+			},
+			want: 15,
+		},
+		{
+			name: "non-nil pointer",
+			ptr:  func() *int { i := 25; return &i }(),
+			defaultFunc: func() int {
+				return 15
+			},
+			want: 25,
+		},
+	}
+
+	for _, tc := range tcs {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := ptr.OrElseFunc(tc.ptr, tc.defaultFunc)
+			if got != tc.want {
+				t.Errorf("OrElseFunc() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
