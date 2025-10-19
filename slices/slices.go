@@ -67,3 +67,12 @@ func All[T any](ts []T, f func(T) bool) bool {
 	}
 	return true
 }
+
+func Any[T any](ts []T, f func(T) bool) bool {
+	for _, t := range ts {
+		if f(t) {
+			return true
+		}
+	}
+	return false
+}

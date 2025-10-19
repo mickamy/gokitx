@@ -204,3 +204,52 @@ func TestAll(t *testing.T) {
 		})
 	}
 }
+
+func TestAny(t *testing.T) {
+	t.Parallel()
+
+	tcs := []struct {
+		name     string
+		intSlice []int
+		pred     func(int) bool
+		want     bool
+	}{
+		{
+			name:     "at least one element satisfies predicate",
+			intSlice: []int{1, 3, 4},
+			pred: func(v int) bool {
+				return v%2 == 0
+			},
+			want: true,
+		},
+		{
+			name:     "no element satisfies predicate",
+			intSlice: []int{1, 3, 5},
+			pred: func(v int) bool {
+				return v%2 == 0
+			},
+			want: false,
+		},
+		{
+			name:     "empty slice returns false",
+			intSlice: []int{},
+			pred: func(v int) bool {
+				return v%2 == 0
+			},
+			want: false,
+		},
+	}
+
+	for _, tc := range tcs {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := slices.Any(tc.intSlice, tc.pred)
+
+			if got != tc.want {
+				t.Errorf("Any() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
