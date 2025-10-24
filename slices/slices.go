@@ -76,3 +76,11 @@ func Any[T any](ts []T, f func(T) bool) bool {
 	}
 	return false
 }
+
+func Reduce[T any, U any](ts []T, init U, f func(U, T) U) U {
+	acc := init
+	for _, t := range ts {
+		acc = f(acc, t)
+	}
+	return acc
+}

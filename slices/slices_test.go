@@ -253,3 +253,49 @@ func TestAny(t *testing.T) {
 		})
 	}
 }
+
+func TestReduce(t *testing.T) {
+	t.Parallel()
+
+	t.Run("sum ints", func(t *testing.T) {
+		t.Parallel()
+
+		intSlice := []int{1, 2, 3, 4}
+		got := slices.Reduce(intSlice, 0, func(acc, v int) int {
+			return acc + v
+		})
+		want := 10
+		if got != want {
+			t.Errorf("Reduce() = %d, want %d", got, want)
+		}
+	})
+
+	t.Run("concat strings", func(t *testing.T) {
+		t.Parallel()
+
+		stringSlice := []string{"go", "kit", "x"}
+		got := slices.Reduce(stringSlice, "", func(acc string, v string) string {
+			if acc == "" {
+				return v
+			}
+			return acc + "-" + v
+		})
+		want := "go-kit-x"
+		if got != want {
+			t.Errorf("Reduce() = %q, want %q", got, want)
+		}
+	})
+
+	t.Run("empty slice returns init", func(t *testing.T) {
+		t.Parallel()
+
+		var empty []int
+		init := 42
+		got := slices.Reduce(empty, init, func(acc, v int) int {
+			return acc + v
+		})
+		if got != init {
+			t.Errorf("Reduce() = %d, want %d", got, init)
+		}
+	})
+}
